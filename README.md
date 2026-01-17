@@ -75,11 +75,9 @@ npm run preview
 ```
 NProfile/
 ├── public/                 # Static assets
-│   ├── assets/
-│   │   └── cv/            # Resume PDF
 │   └── terminal.svg       # Favicon
 ├── src/
-│   ├── assets/            # Project images & CV
+│   ├── assets/            # Images & CV
 │   │   ├── cv/
 │   │   └── images/
 │   ├── components/
