@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../hooks';
 import { SOCIAL_LINKS, CONTACT_EMAIL } from '../../lib/constants';
@@ -9,7 +9,6 @@ import emailjs from '@emailjs/browser';
 const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const EMAILJS_AUTO_REPLY_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID;
 
 // Initialize EmailJS
 if (EMAILJS_PUBLIC_KEY) {
@@ -25,6 +24,8 @@ function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error'
   const prefersReducedMotion = useReducedMotion();
+  const lastSubmitTime = useRef(0);
+  const SUBMIT_COOLDOWN = 5000; // 5 seconds cooldown
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -35,6 +36,20 @@ function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
+
+    const now = Date.now();
+
+    // Prevent double submission with timestamp check
+    if (now - lastSubmitTime.current < SUBMIT_COOLDOWN) {
+      console.warn(`[DUPLICATE BLOCKED] Submission ignored. Last submit was ${Math.round((now - lastSubmitTime.current) / 1000)}s ago`);
+      return;
+    }
+
+    if (isSubmitting) {
+      console.warn('[DUPLICATE BLOCKED] Already submitting, ignoring...');
+      return;
+    }
 
     // Check if EmailJS is configured
     if (!EMAILJS_PUBLIC_KEY || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
@@ -42,6 +57,8 @@ function Contact() {
       return;
     }
 
+    console.log('[SUBMIT START] Starting form submission at', new Date().toISOString());
+    lastSubmitTime.current = now;
     setIsSubmitting(true);
     setSubmitStatus(null);
 
@@ -52,7 +69,7 @@ function Contact() {
         message: formData.message,
       };
 
-      console.log('Sending email to you with params:', templateParams);
+      console.log('[EMAIL 1] Sending to you with params:', templateParams);
 
       // Send email to you
       await emailjs.send(
@@ -61,36 +78,16 @@ function Contact() {
         templateParams
       );
 
-      console.log('First email sent successfully!');
-
-      // Send auto-reply to sender (if configured)
-      if (EMAILJS_AUTO_REPLY_TEMPLATE_ID) {
-        const autoReplyParams = {
-          user_name: formData.name,
-          user_email: formData.email,
-          message: formData.message,
-        };
-
-        console.log('Sending auto-reply with params:', autoReplyParams);
-
-        await emailjs.send(
-          EMAILJS_SERVICE_ID,
-          EMAILJS_AUTO_REPLY_TEMPLATE_ID,
-          autoReplyParams
-        );
-
-        console.log('Auto-reply sent successfully!');
-      }
-
+      console.log('[EMAIL 1] Sent successfully!');
+      console.log('[SUBMIT SUCCESS] Email sent successfully');
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
-      console.error('EmailJS error details:', error);
-      console.error('Error text:', error.text);
-      console.error('Error status:', error.status);
+      console.error('[SUBMIT ERROR] EmailJS error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
+      console.log('[SUBMIT END] Form submission complete');
     }
   };
 

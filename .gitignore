@@ -58,6 +58,7 @@ coverage
 
 # AI Debug
 .ai
+.serena
 
 # OS
 Thumbs.db
