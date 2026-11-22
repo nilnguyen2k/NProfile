@@ -1,5 +1,6 @@
 import Header from './components/layout/Header'
 import Hero from './components/sections/Hero'
+import Stats from './components/sections/Stats'
 import Skills from './components/sections/Skills'
 import Experience from './components/sections/Experience'
 import Projects from './components/sections/Projects'
@@ -21,6 +22,7 @@ function App() {
       {/* Main Content */}
       <main id="main-content">
         <Hero />
+        <Stats />
         <Skills />
         <Experience />
         <Projects />

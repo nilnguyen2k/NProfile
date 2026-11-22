@@ -1,12 +1,12 @@
-import { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../hooks';
+import SectionHeading from '../ui/SectionHeading';
 import { cn } from '../../lib/utils';
-import { useTheme } from '../../contexts/ThemeContext';
+import { SOCIAL_LINKS } from '../../lib/constants';
 import cameraProjectImg from '../../assets/images/camera_project.avif';
-import travelServicesProjectImg from '../../assets/images/travelservices_project.png';
+import travelServicesProjectImg from '../../assets/images/travelservices_project.jpg';
 import k8sAnsibleProjectImg from '../../assets/images/k8s_ansible_project.jpg';
-import wpProjectImg from '../../assets/images/wp_project.png';
+import wpProjectImg from '../../assets/images/wp_project.jpg';
 
 // Projects data
 const PROJECTS = [
@@ -27,6 +27,7 @@ const PROJECTS = [
     status: 'Completed',
     description: 'This application facilitates the seamless search, booking, organization, management, and exploration of various travel services with ease.',
     techStack: ['Flutter', 'Spring Boot', 'Google Map', 'Cloudinary', 'Elasticsearch'],
+    repoUrl: 'https://github.com/nilnguyen2k/TravelServices',
   },
   {
     id: 3,
@@ -45,47 +46,14 @@ const PROJECTS = [
     status: 'Completed',
     description: 'Create a template for deploying WordPress, utilizing Caddy for reverse proxy, and supporting custom domains.',
     techStack: ['Docker', 'Portainer', 'WordPress', 'Caddy', 'Networking'],
+    repoUrl: 'https://github.com/nilnguyen2k/WPEcommerce',
   },
 ];
 
+const GITHUB_URL = SOCIAL_LINKS.find((l) => l.icon === 'github')?.url;
+
 function Projects() {
-  const scrollRef = useRef(null);
   const prefersReducedMotion = useReducedMotion();
-  const { theme } = useTheme();
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const cardWidth = 400; // Width of each card
-      const gap = 24; // gap-6 = 1.5rem = 24px
-      const scrollAmount = cardWidth + gap;
-      const newIndex = direction === 'left'
-        ? Math.max(0, activeIndex - 1)
-        : Math.min(PROJECTS.length - 1, activeIndex + 1);
-
-      scrollRef.current.scrollTo({
-        left: newIndex * scrollAmount,
-        behavior: 'smooth',
-      });
-      setActiveIndex(newIndex);
-    }
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollRef.current) {
-        const cardWidth = 400;
-        const gap = 24;
-        const scrollLeft = scrollRef.current.scrollLeft;
-        const index = Math.round(scrollLeft / (cardWidth + gap));
-        setActiveIndex(Math.min(index, PROJECTS.length - 1));
-      }
-    };
-
-    const scrollElement = scrollRef.current;
-    scrollElement?.addEventListener('scroll', handleScroll);
-    return () => scrollElement?.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <section id="projects" className="section bg-white dark:bg-slate-900">
@@ -96,115 +64,88 @@ function Projects() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-16 text-center">
-            <span className="text-primary">Projects</span>
-          </h2>
+          <SectionHeading index="03" label="projects" title="Featured Projects" subtitle="Selected work from research and personal projects." />
 
-          {/* Horizontal Scroll Container */}
-          <div className="relative flex items-center">
-            {/* Left Button */}
-            <button
-              onClick={() => scroll('left')}
-              className="flex-shrink-0 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors z-10"
-              aria-label="Scroll left"
-            >
-              <svg className="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
+            {PROJECTS.map((project, index) => (
+              <motion.article
+                key={project.id}
+                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.5, delay: (index % 2) * 0.1 }}
+                className="group card rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40"
+              >
+                {/* Image */}
+                <div className="relative overflow-hidden aspect-[16/9]">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <span className={cn(
+                    'absolute top-3 right-3 inline-block px-2 py-1 text-xs font-bold uppercase rounded-lg border shadow-sm backdrop-blur',
+                    project.status === 'Completed'
+                      ? 'bg-green-100/90 dark:bg-green-950/80 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
+                      : 'bg-yellow-100/90 dark:bg-yellow-950/80 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800'
+                  )}>
+                    {project.status}
+                  </span>
+                </div>
 
-            {/* Scrollable Content */}
-            <div
-              ref={scrollRef}
-              className="flex-1 overflow-x-auto overflow-y-hidden scroll-smooth px-4 py-4"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              <div className="flex gap-6" style={{ width: 'max-content' }}>
-                {PROJECTS.map((project) => (
-                  <motion.div
-                    key={project.id}
-                    initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true, margin: '-100px' }}
-                    transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
-                    whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
-                    whileTap={{ scale: prefersReducedMotion ? 1 : 0.98 }}
-                    className="card p-6 w-[360px] flex-shrink-0 rounded-2xl overflow-hidden"
-                  >
-                    {/* Project Image */}
-                    <div className="mb-4 -mt-6 -mx-6 rounded-t-2xl overflow-hidden relative">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-64 object-cover"
-                      />
-                      {/* Status Badge - Top Right */}
-                      <div className="absolute top-3 right-3">
-                        <span className={cn(
-                          'inline-block px-2 py-1 text-xs font-bold uppercase rounded-lg border shadow-sm',
-                          project.status === 'Completed'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
-                            : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800'
-                        )}>
-                          {project.status}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content Container - Equal padding on both sides */}
-                    <div className="px-1">
-                      {/* Title & Role */}
-                      <div className="mb-1">
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-0.5 text-left">
-                          {project.title}
-                        </h3>
-                        <p className="text-primary font-medium text-xs text-left">{project.projectType}</p>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-slate-700 dark:text-slate-300 text-xs mb-2 text-justify">
-                        {project.description}
-                      </p>
-
-                      {/* Tech Stack */}
-                      <div>
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mb-1 font-semibold">
-                          Technologies:
-                        </p>
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          {project.techStack.map((tech) => (
-                            <motion.span
-                              key={`${tech}-${theme}`}
-                              whileHover={{
-                                scale: 1.1,
-                                backgroundColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.1)',
-                                borderColor: theme === 'dark' ? 'rgba(16, 185, 129, 0.5)' : 'rgba(16, 185, 129, 0.3)',
-                                transition: { duration: 0.2 }
-                              }}
-                              className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 cursor-default"
-                            >
-                              {tech}
-                            </motion.span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right Button */}
-            <button
-              onClick={() => scroll('right')}
-              className="flex-shrink-0 p-3 rounded-full bg-white dark:bg-slate-800 shadow-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors z-10"
-              aria-label="Scroll right"
-            >
-              <svg className="w-6 h-6 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-1">
+                  <p className="text-primary font-medium text-xs uppercase tracking-wide mb-1">{project.projectType}</p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-4 flex-1">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {project.techStack.map((tech) => (
+                      <span
+                        key={tech}
+                        className="inline-flex items-center px-2 py-1 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 text-xs font-medium rounded-md border border-slate-200 dark:border-slate-700"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  {project.repoUrl && (
+                    <a
+                      href={project.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-flex items-center gap-1.5 self-start text-sm font-medium text-primary hover:underline focus-ring rounded"
+                    >
+                      View source
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </motion.article>
+            ))}
           </div>
+
+          {GITHUB_URL && (
+            <div className="flex justify-center mt-12">
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:border-primary hover:text-primary transition-colors focus-ring"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+                More on GitHub
+              </a>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

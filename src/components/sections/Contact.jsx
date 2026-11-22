@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../hooks';
+import SectionHeading from '../ui/SectionHeading';
 import { SOCIAL_LINKS, CONTACT_EMAIL } from '../../lib/constants';
 import Button from '../ui/Button';
 import emailjs from '@emailjs/browser';
@@ -42,12 +43,10 @@ function Contact() {
 
     // Prevent double submission with timestamp check
     if (now - lastSubmitTime.current < SUBMIT_COOLDOWN) {
-      console.warn(`[DUPLICATE BLOCKED] Submission ignored. Last submit was ${Math.round((now - lastSubmitTime.current) / 1000)}s ago`);
       return;
     }
 
     if (isSubmitting) {
-      console.warn('[DUPLICATE BLOCKED] Already submitting, ignoring...');
       return;
     }
 
@@ -56,8 +55,6 @@ function Contact() {
       setSubmitStatus('error');
       return;
     }
-
-    console.log('[SUBMIT START] Starting form submission at', new Date().toISOString());
     lastSubmitTime.current = now;
     setIsSubmitting(true);
     setSubmitStatus(null);
@@ -69,17 +66,12 @@ function Contact() {
         message: formData.message,
       };
 
-      console.log('[EMAIL 1] Sending to you with params:', templateParams);
-
       // Send email to you
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,
         templateParams
       );
-
-      console.log('[EMAIL 1] Sent successfully!');
-      console.log('[SUBMIT SUCCESS] Email sent successfully');
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
     } catch (error) {
@@ -87,7 +79,6 @@ function Contact() {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
-      console.log('[SUBMIT END] Form submission complete');
     }
   };
 
@@ -100,18 +91,14 @@ function Contact() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: prefersReducedMotion ? 0 : 0.5 }}
         >
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-12 text-center">
-            <span className="text-slate-600 dark:text-slate-400">Contact </span>
-            <span className="text-primary">Me</span>
-          </h2>
+          <SectionHeading index="05" label="contact" title="Get in Touch" subtitle="Open to DevOps and cloud engineering roles. Let&apos;s talk." />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
             {/* Contact Info */}
             <div className="space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-6">Get In Touch</h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8 text-justify">
-                  I'm always open to discussing new opportunities, interesting projects,
+                <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-8">
+                  I&apos;m always open to discussing new opportunities, interesting projects,
                   or just having a chat about DevOps and cloud technologies.
                 </p>
               </div>
@@ -182,9 +169,7 @@ function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={link.ariaLabel}
-                      whileHover={{ scale: prefersReducedMotion ? 1 : 1.05 }}
-                      whileTap={{ scale: prefersReducedMotion ? 1 : 0.95 }}
-                      className="w-10 h-10 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors"
+                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-white hover:bg-slate-700 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors"
                     >
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         {link.icon === 'facebook' && (
@@ -263,7 +248,7 @@ function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-4 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg text-green-700 dark:text-green-300 text-sm"
                 >
-                  Thanks for reaching out! I'll get back to you soon.
+                  Thanks for reaching out! I&apos;ll get back to you soon.
                 </motion.div>
               )}
 
