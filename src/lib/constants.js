@@ -30,12 +30,14 @@ export const SOCIAL_LINKS = [
   },
   {
     name: 'LinkedIn',
+    professional: true,
     url: 'https://www.linkedin.com/in/nilnguyen/',
     icon: 'linkedin',
     ariaLabel: 'View LinkedIn profile',
   },
   {
     name: 'GitHub',
+    professional: true,
     url: 'https://github.com/nilnguyen2k',
     icon: 'github',
     ariaLabel: 'View GitHub profile',
@@ -74,6 +76,7 @@ export const SKILL_CATEGORIES = [
       { name: 'Kubernetes', level: 90 },
       { name: 'Helm', level: 85 },
       { name: 'ECS', level: 85 },
+      { name: 'Istio Gateway', level: 75 },
     ],
   },
   {
@@ -109,6 +112,18 @@ export const SKILL_CATEGORIES = [
     ],
   },
   {
+    id: 'security',
+    name: 'Security & Networking',
+    skills: [
+      { name: 'AWS WAF', level: 80 },
+      { name: 'GuardDuty', level: 75 },
+      { name: 'Security Hub', level: 75 },
+      { name: 'Pritunl Zero Trust', level: 80 },
+      { name: 'Tailscale', level: 80 },
+      { name: 'SSO', level: 80 },
+    ],
+  },
+  {
     id: 'selfhosting',
     name: 'Self Hosting',
     skills: [
@@ -132,6 +147,22 @@ export const SKILL_CATEGORIES = [
       { name: 'Caddy', level: 75 },
       { name: 'CloudFlare', level: 80 },
     ],
+  },
+];
+
+/**
+ * Start of the first DevOps role (PTN Global, 02/2023), used for "years of experience"
+ */
+export const CAREER_START = new Date(2023, 1, 1);
+
+/**
+ * Certifications
+ */
+export const CERTIFICATIONS = [
+  {
+    name: 'AWS Certified Cloud Practitioner',
+    issuer: 'Amazon Web Services',
+    date: 'Mar 2023',
   },
 ];
 

@@ -12,6 +12,16 @@
     scroll-behavior: smooth;
   }
 
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  /* Keep section titles clear of the fixed header when jumping via nav */
+  section[id] {
+    scroll-margin-top: 4rem;
+  }
+
   /* Custom scrollbar for webkit browsers */
   ::-webkit-scrollbar {
     width: 8px;
@@ -54,6 +64,24 @@
 }
 
 @layer utilities {
+  /* Blinking block cursor for the hero terminal */
+  .terminal-cursor {
+    @apply inline-block w-2 h-[1.1em] bg-primary align-text-bottom ml-0.5;
+    animation: terminal-blink 1s steps(1) infinite;
+  }
+
+  @keyframes terminal-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-cursor {
+      animation: none;
+    }
+  }
+
   /* Text balance for headings */
   .text-balance {
     text-wrap: balance;

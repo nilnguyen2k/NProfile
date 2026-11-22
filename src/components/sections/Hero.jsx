@@ -1,58 +1,13 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useReducedMotion } from '../../hooks';
 import { RESUME_URL, SOCIAL_LINKS } from '../../lib/constants';
 import { useTheme } from '../../contexts/ThemeContext';
 import Button from '../ui/Button';
+import Terminal from '../ui/Terminal';
 
 function Hero() {
   const { theme } = useTheme();
   const prefersReducedMotion = useReducedMotion();
-  const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
-  const [isFadingOut, setIsFadingOut] = useState(false);
-
-  const roleText = "DevOps Engineer";
-
-  useEffect(() => {
-    if (prefersReducedMotion) {
-      setDisplayText(roleText);
-      setIsTyping(false);
-      return;
-    }
-
-    let charIndex = 0;
-    let pauseSpeed = 1000;
-    let disappearPause = 500;
-    let fadeDuration = 500;
-
-    const type = () => {
-      if (charIndex < roleText.length) {
-        setDisplayText(roleText.substring(0, charIndex + 1));
-        charIndex++;
-        setTimeout(type, 80);
-      } else {
-        setIsTyping(false);
-        setTimeout(() => {
-          setIsFadingOut(true);
-          setTimeout(() => {
-            setDisplayText('');
-            setIsFadingOut(false);
-            setIsTyping(true);
-            charIndex = 0;
-            setTimeout(type, disappearPause);
-          }, fadeDuration);
-        }, pauseSpeed);
-      }
-    };
-
-    setTimeout(type, 500);
-
-    return () => {
-      // Cleanup if needed
-    };
-  }, [prefersReducedMotion]);
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -95,53 +50,40 @@ function Hero() {
         animate="visible"
         className="container-custom relative z-10"
       >
-        <div className="max-w-4xl">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-10 items-center pt-24 pb-28 lg:py-0">
+        <div className="max-w-2xl">
+          <motion.p variants={itemVariants} className="font-mono text-sm text-primary mb-4">
+            Hi, my name is
+          </motion.p>
+
           {/* Name */}
           <motion.h1
             variants={itemVariants}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold text-slate-900 dark:text-slate-100 mb-4 text-balance"
+            className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-slate-100 mb-3 text-balance"
           >
-            I'm Nil Nguyen
+            Nil Nguyen
           </motion.h1>
 
-          {/* Typing Animation for Role */}
-          <motion.div
+          {/* Role */}
+          <motion.p
             variants={itemVariants}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-slate-600 dark:text-slate-400 mb-8 text-balance min-h-[1.2em]"
-            style={{ minHeight: '1.2em' }}
+            className="text-3xl md:text-5xl font-bold text-primary mb-8 text-balance"
           >
-            <motion.div
-              className="inline-block"
-              style={{ minWidth: '15ch', minHeight: '1.2em', display: 'inline-block' }}
-            >
-              <motion.span
-                animate={{ opacity: isFadingOut ? 0 : 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                {displayText}
-              </motion.span>
-              {isTyping && !isFadingOut && (
-                <motion.span
-                  animate={{ opacity: [1, 0] }}
-                  transition={{ repeat: Infinity, duration: 0.8 }}
-                  className="inline-block w-1 h-12 md:h-16 lg:h-20 bg-primary ml-2 align-middle"
-                />
-              )}
-            </motion.div>
-          </motion.div>
+            DevOps Engineer
+          </motion.p>
 
           {/* Description */}
           <motion.div
             variants={itemVariants}
-            className="max-w-2xl mb-8"
+            className="mb-8"
           >
             <motion.p
-              className="text-sm md:text-base italic text-slate-600 dark:text-slate-400 mb-4 text-justify"
+              className="text-sm md:text-base italic text-slate-600 dark:text-slate-400 mb-4"
             >
-              "Automate everything. Monitor everything. Improve everything."
+              &ldquo;Automate everything. Monitor everything. Improve everything.&rdquo;
             </motion.p>
             <motion.p
-              className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed text-justify mb-4"
+              className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed mb-4"
             >
               A passionate DevOps engineer with expertise in automating infrastructure, optimizing deployment pipelines, and enhancing system reliability. Skilled in cloud platforms, CI/CD tools, and containerization, I bridge the gap between development and operations to deliver scalable, efficient, and secure software solutions.
             </motion.p>
@@ -163,6 +105,12 @@ function Hero() {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
                 <span className="text-green-600 dark:text-green-400 font-medium">Available now</span>
+              </div>
+              <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                AWS Certified
               </div>
             </motion.div>
           </motion.div>
@@ -194,7 +142,7 @@ function Hero() {
                 Follow me:
               </span>
               <div className="flex gap-4">
-                {SOCIAL_LINKS.map((link) => (
+                {SOCIAL_LINKS.filter((link) => link.professional).map((link) => (
                   <motion.a
                     key={link.name}
                     href={link.url}
@@ -227,6 +175,12 @@ function Hero() {
                 ))}
               </div>
             </motion.div>
+        </div>
+
+          {/* Terminal */}
+          <motion.div variants={itemVariants} className="w-full min-w-0">
+            <Terminal />
+          </motion.div>
         </div>
       </motion.div>
 
