@@ -35,11 +35,17 @@
         "sameAs": ["https://www.linkedin.com/in/nilnguyen/", "https://github.com/nilnguyen2k"]
       }
     </script>
+    <!-- Apply the saved theme before first paint so light-mode visitors don't see a dark flash -->
+    <script>
+      try {
+        if (localStorage.getItem('theme') === 'light') document.documentElement.classList.remove('dark');
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/NProfile/assets/index-CxNnQy-N.js"></script>
-    <link rel="stylesheet" crossorigin href="/NProfile/assets/index-DF8rnd2n.css">
+    <script type="module" crossorigin src="/NProfile/assets/index-DAI-86OY.js"></script>
+    <link rel="stylesheet" crossorigin href="/NProfile/assets/index-DctvXqcJ.css">
   </head>
   <body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 antialiased">
     <div id="root"></div>
